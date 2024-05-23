@@ -1,0 +1,4 @@
+Impeller min life -> 506
+Node min life -> 4638
+Section min life -> 18
+All sections are well extracted from Ansys.

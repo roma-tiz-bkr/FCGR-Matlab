@@ -1,0 +1,359 @@
+finish
+/clear,nostart
+
+*dim,COMPONENT_NAME,string,128,1
+
+!%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+!%%%%%%%%%%%%%%%%%%%%%%%%%% INPUT PHASE PLEASE SET ME!! %%%%%%%%%%%%%%%%%%%%%%%%%%
+LS_MAX=14		! Step for for nodes search --> MCS
+LS_start=2		! Step for starting extraction results 
+LS_end=LS_MAX   ! Step for ending extraction results 
+
+COMPONENT_NAME(1)='n_disk2_worst_ALL'
+S1_filter_skip=100 			! [MPa] The nodes with S1 less than this value are not considered
+
+! Reference thickness for path evaluation max length that is applied everywhere
+tkref_for_path=30!30 !10*0.7 	! [mm]
+Width_for_matlab=18	! [mm]
+rad_tol_sel=3.5 				! [mm] Radial selection tolerance
+
+allsel,all
+!%%%%%%%%%%%%%%%%%%%%%%%%%% %%%%%%%%%%%%%%%%%%%%%%%%%%% %%%%%%%%%%%%%%%%%%%%%%%%%%
+!%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+/post1
+Inres,ALL   
+FILE,'file','rst','.'   
+set,LS_MAX,last	 
+alls
+
+/input,n_disk2_worst_ALL,txt
+
+cmsel,s,%COMPONENT_NAME(1)%,node
+eall
+nsle,r,corner
+cmdele,%COMPONENT_NAME(1)%
+cm,%COMPONENT_NAME(1)%,node
+
+*get,num_node_FAD,node,0,count
+
+!%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+! Node list creation - lines for wp orientations
+*dim,n_id_nostress2,array,num_node_FAD,2
+
+n_plot_stress=0
+nn=ndnext(-1)
+*do,i,1,num_node_FAD
+*get,n_nostress,node,nn,s,1
+*if,n_nostress,GE,S1_filter_skip,then
+	n_plot_stress=n_plot_stress+1
+	n_id_nostress2(n_plot_stress,1)=nn
+	n_id_nostress2(n_plot_stress,2)=n_nostress
+*endif
+	nn=ndnext(nn)
+*enddo
+
+*dim,n_id_nostress,array,n_plot_stress,2
+nsel,none
+*do,i,1,n_plot_stress
+	nsel,a,,,n_id_nostress2(i,1)
+	n_id_nostress(i,1)=n_id_nostress2(i,1)
+	n_id_nostress(i,2)=n_id_nostress2(i,2)
+*enddo
+
+cm,node_postproc,node
+! ! Only to see the nodes with high S1
+! cmsel,s,node_postproc,node
+! esln,s
+! esel,inve
+! /edge,,1
+! gplo
+!%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ 
+!%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+*use,'wp_for_crack_grad_ver03.mac',LS_MAX,n_plot_stress
+!%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+!kkkk=3$i=285$/eof
+*do,kkkk,LS_start,LS_end
+!%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+! Path data extraction cycle!
+*dim,n_id_LC,array,n_plot_stress,2
+*dim,path_res,array,n_plot_stress,8
+
+
+/post1
+Inres,ALL   
+FILE,'file','rst','.'   
+set,kkkk,last	 
+alls
+
+*dim,n_first,array,n_plot_stress,1
+*do,i,1,n_plot_stress,1
+alls
+csys,0
+rsys,0
+ksel,all
+KWPLAN, , k_all(i,1), k_all(i,2), k_all(i,3)
+
+csys,4
+
+! %%%%%% %%%%%% Nodes for path end determination
+! FIRST NODE
+klocx=
+klocy=
+klocz=
+*get,klocx,kp,k_all(i,1),loc,x
+*get,klocy,kp,k_all(i,1),loc,y
+*get,klocz,kp,k_all(i,1),loc,z
+n_first(i,1)=node(klocx,klocy,klocz)
+
+! Where I have to go? - Calculation of the next path node
+nsel,s,,,n_first(i,1)
+esln,s
+nsle,s
+
+! Main direction evaluation for nodes selection
+*get,mx_z_csys,node,0,MXLOC,z
+*get,mn_z_csys,node,0,MNLOC,z
+abs_mn_z_csys=(mn_z_csys**2)**0.5
+abs_mx_z_csys=(mx_z_csys**2)**0.5
+
+*get,mx_y_csys,node,0,MXLOC,y
+*get,mn_y_csys,node,0,MNLOC,y
+abs_mn_y_csys=(mn_y_csys**2)**0.5
+abs_mx_y_csys=(mx_y_csys**2)**0.5
+
+all_max_pos_arr=
+*dim,all_max_pos_arr,array,4,1
+all_max_pos_arr(1,1)=abs_mn_z_csys
+all_max_pos_arr(2,1)=abs_mx_z_csys
+all_max_pos_arr(3,1)=abs_mn_y_csys
+all_max_pos_arr(4,1)=abs_mx_y_csys
+
+*vscfun,lmin_all_max_pos_ar,LMIN,all_max_pos_arr
+
+checkdir_y=0
+checkdir_z=0
+
+*if,lmin_all_max_pos_ar,EQ,1,then
+	checkdir_y=0
+	checkdir_z=1
+*elseif,lmin_all_max_pos_ar,EQ,2,then
+	checkdir_y=0
+	checkdir_z=1
+*elseif,lmin_all_max_pos_ar,EQ,3,then
+	checkdir_y=1
+	checkdir_z=0
+*elseif,lmin_all_max_pos_ar,EQ,4,then
+	checkdir_y=1
+	checkdir_z=0
+*endif
+
+*if,checkdir_y,EQ,1,then ! The y direction must be considered for node path direction
+	! Other extremity node selection
+	alls
+	*if,mx_y_csys,GT,abs_mn_y_csys,then
+		esel,r,cent,y,0,tkref_for_path*0.95
+	*else
+		esel,r,cent,y,-tkref_for_path*0.95,0
+	*endif
+	nsle,s
+	nsel,r,ext
+	nsle,r,corner
+	nsel,u,,,n_first(i,1)
+	nsel,r,loc,x,-rad_tol_sel,rad_tol_sel
+	nsel,r,loc,z,-rad_tol_sel,rad_tol_sel
+	nsel,u,loc,y,-tkref_for_path*0.3,tkref_for_path*0.3
+*else,checkdir_z,EQ,1,then ! The zzz direction must be considered for node path direction
+	! Other extremity node selection
+	alls
+	*if,mx_z_csys,GT,abs_mn_z_csys,then
+		esel,r,cent,z,0,tkref_for_path*0.95
+	*else
+		esel,r,cent,z,-tkref_for_path*0.95,0
+	*endif
+	nsle,s
+	nsel,r,ext
+	nsle,r,corner
+	nsel,u,,,n_first(i,1)
+	nsel,r,loc,x,-rad_tol_sel,rad_tol_sel
+	nsel,r,loc,y,-rad_tol_sel,rad_tol_sel
+	nsel,u,loc,z,-tkref_for_path*0.3,tkref_for_path*0.3
+*endif
+
+cm,temp_n_path,node
+
+eall
+
+*get,n_tot_loc,node,0,count
+
+alls
+*if,n_tot_loc,gt,0,then
+csys,4
+rsys,4
+distance=
+distance_REF=
+*dim,distance_REF,array,1,4
+*dim,distance,array,n_tot_loc,7
+nsel,r,node,,n_first(i,1)
+
+*get,distance_REF(1,1),node,n_first(i,1),loc,x
+*get,distance_REF(1,2),node,n_first(i,1),loc,y
+*get,distance_REF(1,3),node,n_first(i,1),loc,z
+distance_REF(1,4)=n_first(i,1)
+
+cmsel,s,temp_n_path,node
+
+nn=ndnext(-1)
+*do,jj,1,n_tot_loc,1
+*get,distance(jj,1),node,nn,loc,x
+*get,distance(jj,2),node,nn,loc,y
+*get,distance(jj,3),node,nn,loc,z
+distance(jj,7)=((distance(jj,1)-distance_REF(1,1))**2+(distance(jj,2)-distance_REF(1,2))**2+(distance(jj,3)-distance_REF(1,3))**2)**0.5
+distance(jj,4)=((distance(jj,1)-distance_REF(1,1))**2+(distance(jj,2)-distance_REF(1,2))**2+(0-0)**2)**0.5 ! only in plane distance Z is detemined with tkref_for_path
+distance(jj,5)=nn
+distance(jj,6)=distance_REF(1,4)
+nn=ndnext(nn)
+*enddo
+
+*vscfun,id_max,LMIN,distance(1,4)
+
+alls
+nsel,s,node,,distance(id_max,5)
+nsel,a,node,,distance(id_max,6)
+!*  
+PATH,PATH,2,30,20, 
+PPATH,1,n_first(i,1)
+PPATH,2,distance(id_max,5)
+!*  
+PATH,PATH   
+AVPRIN,0, , 
+!*  
+PDEF,S_X,S,X,AVG  !!!!!!!!!!!!!!!!! SX is the direction of S1 at MCS that is used also in the other LS extrapolations.
+/PBC,PATH, ,0   
+!*  
+
+PAGET,S_X_sec%i%_LS%kkkk%,TABL	! An array is stored with all stress path results
+
+path_res(i,1)=i						! Section number
+path_res(i,2)=distance(id_max,6)	! First node
+path_res(i,3)=distance(id_max,5)	! Second node
+path_res(i,4)=distance(id_max,7)	! Distance between first and last node (assumed thickness)
+path_res(i,5)=Width_for_matlab		! Path width for propagation calculation
+path_res(i,6)=LS_start		! Starting postproc loadstep number
+path_res(i,7)=LS_end		! Ending postproc loadstep number
+path_res(i,8)=LS_MAX		! S1 evaluation direction postproc loadstep number
+
+PADEL,ALL 
+
+alls
+nsel,s,node,,distance(id_max,5)
+nsel,a,node,,distance(id_max,6)
+!*  
+PATH,PATH,2,30,20, 
+PPATH,1,n_first(i,1)
+PPATH,2,distance(id_max,5)
+!*  
+PATH,PATH   
+AVPRIN,0, , 
+!*  
+PDEF,S_EQ,S,EQV,AVG  
+/PBC,PATH, ,0  
+!PAGET,S_EQ_sec%i%_LS%kkkk%,TABL	! An array is stored with all stress path results
+/nopr
+PRSECT, ,0,0
+*get,memb_eqv,SECTION,MEMBRANE,INSIDE,s,eqv
+!*get,m_bend_eqv_ins,SECTION,SUM ,INSIDE,s,eqv 
+!*get,m_bend_eqv_out,SECTION,SUM ,OUTSIDE,s,eqv 
+!m_bend_max=max(m_bend_eqv_out,m_bend_eqv_ins)
+!Pm_SEQ_sec%i%_LS%kkkk%=memb_eqv
+!Pb_SEQ_sec%i%_LS%kkkk%=m_bend_max-memb_eqv
+*get,bend_eqv_ins,SECTION,BENDING ,INSIDE,s,eqv 
+!*get,bend_eqv_out,SECTION,BENDING ,OUTSIDE,s,eqv 
+!bend_max=max(bend_eqv_out,bend_eqv_ins)
+Pm_SEQ_sec%i%_LS%kkkk%=memb_eqv
+Pb_SEQ_sec%i%_LS%kkkk%=bend_eqv_ins	! The inside bending Seqv is chosen for the calculation because it is the nearest to the crack
+
+PADEL,ALL 
+/gopr
+n_id_LC(i ,1)=  distance(id_max,6)  $ n_id_LC(i ,2)= distance(id_max,5)
+*else					
+! if there are not selection nodes, they are skip and zero is written in the final txt matrix everywhere
+csys,4
+rsys,4
+klocx=
+klocy=
+klocz=
+*get,klocx,kp,k_all(i,1),loc,x
+*get,klocy,kp,k_all(i,1),loc,y
+*get,klocz,kp,k_all(i,1),loc,z
+
+n_first(i,1)=node(klocx,klocy,klocz)
+path_res(i,1)=i			! Section number
+path_res(i,2)=n_first(i,1)	! First node
+path_res(i,3)=0			! Second node
+path_res(i,4)=0			! Pm membrane computed by hand
+path_res(i,5)=0			! Pb bending computed by hand
+path_res(i,6)=LS_start		! Starting postproc loadstep number
+path_res(i,7)=LS_end		! Ending postproc loadstep number
+path_res(i,8)=LS_MAX		! S1 evaluation direction postproc loadstep number
+
+! I put zero to not have problems
+*dim,S_X_sec%i%_LS%kkkk%,array,21,30
+Pm_SEQ_sec%i%_LS%kkkk%=0
+Pb_SEQ_sec%i%_LS%kkkk%=0
+
+*endif	
+*enddo ! Chiudo estrapolazione dati - loop su i - nodi
+*enddo ! Chiudo estrapolazione dati - loop su kkkk - LS
+
+finish
+
+save,file,db,,model
+
+*do,i,1,n_plot_stress,1
+*dim,ALL_RES_SEC%i%,array,21,3*(LS_end-LS_start+1)
+*do,kkkk,1,LS_end-LS_start+1
+
+ALL_RES_SEC%i%(1:21,(kkkk-1)*3+1)=S_X_sec%i%_LS%LS_start-1+kkkk%(1:21,4)
+ALL_RES_SEC%i%(1:21,(kkkk-1)*3+2)=S_X_sec%i%_LS%LS_start-1+kkkk%(1:21,5)
+ALL_RES_SEC%i%(1,(kkkk-1)*3+3)=Pm_SEQ_sec%i%_LS%LS_start-1+kkkk%
+ALL_RES_SEC%i%(2,(kkkk-1)*3+3)=Pb_SEQ_sec%i%_LS%LS_start-1+kkkk%
+
+*enddo
+*mwrite,ALL_RES_SEC%i%,ALL_RES_SEC%i%,txt,,JIK
+(100F30.15)
+*enddo
+
+*mwrite,path_res,Section_data,txt,,JIK
+(100F20.7)
+
+alls
+
+
+/prep7
+allsel,all
+*do,i,1,n_plot_stress,1
+*if,n_id_LC(i ,1),ne,0,then
+*get,kmax_temp2,kp,0,num,max
+	knode,kmax_temp2+1,n_id_LC(i ,1)
+	knode,kmax_temp2+2,n_id_LC(i ,2)
+	l,kmax_temp2+1,kmax_temp2+2
+*endif	
+*enddo
+
+allsel,all
+eall
+nsel,none
+ksel,none
+/TRLCY,ELEM,0.9,ALL,,,  
+/PNUM,LINE,1
+/edge,,1
+gplo
+
+finish
+!/exit,nosave
+/exit,model
+/eof
+
+

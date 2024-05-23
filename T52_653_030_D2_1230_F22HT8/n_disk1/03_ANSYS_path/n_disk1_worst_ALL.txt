@@ -1,0 +1,37 @@
+nsel,s,,,        232 
+nsel,a,,,        233 
+nsel,a,,,        236 
+nsel,a,,,        237 
+nsel,a,,,        238 
+nsel,a,,,        242 
+nsel,a,,,        243 
+nsel,a,,,        247 
+nsel,a,,,        248 
+nsel,a,,,        251 
+nsel,a,,,        252 
+nsel,a,,,        253 
+nsel,a,,,        257 
+nsel,a,,,        258 
+nsel,a,,,        262 
+nsel,a,,,        263 
+nsel,a,,,        266 
+nsel,a,,,        267 
+nsel,a,,,        268 
+nsel,a,,,        272 
+nsel,a,,,        273 
+nsel,a,,,        277 
+nsel,a,,,        278 
+nsel,a,,,        281 
+nsel,a,,,        282 
+nsel,a,,,        283 
+nsel,a,,,        295 
+nsel,a,,,        296 
+nsel,a,,,        298 
+nsel,a,,,        299 
+nsel,a,,,        300 
+nsel,a,,,        301 
+nsel,a,,,        302 
+nsel,a,,,        303 
+nsel,a,,,        304 
+cm,n_disk1_worst_ALL,node
+alls

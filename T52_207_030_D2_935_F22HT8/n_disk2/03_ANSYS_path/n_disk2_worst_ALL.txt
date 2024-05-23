@@ -1,0 +1,29 @@
+nsel,s,,,     141094 
+nsel,a,,,     141113 
+nsel,a,,,     141132 
+nsel,a,,,     141152 
+nsel,a,,,     141153 
+nsel,a,,,     141154 
+nsel,a,,,     141177 
+nsel,a,,,     141178 
+nsel,a,,,     141179 
+nsel,a,,,     141180 
+nsel,a,,,     141181 
+nsel,a,,,     141182 
+nsel,a,,,     141183 
+nsel,a,,,     141184 
+nsel,a,,,     141185 
+nsel,a,,,     141186 
+nsel,a,,,     141187 
+nsel,a,,,     141188 
+nsel,a,,,     141189 
+nsel,a,,,     141190 
+nsel,a,,,     141191 
+nsel,a,,,     141196 
+nsel,a,,,     141213 
+nsel,a,,,     141214 
+nsel,a,,,     141215 
+nsel,a,,,     141216 
+nsel,a,,,     141217 
+cm,n_disk2_worst_ALL,node
+alls

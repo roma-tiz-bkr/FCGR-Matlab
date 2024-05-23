@@ -1,0 +1,9 @@
+*********************************
++++++++++ ROTOR REPORT ++++++++++
+*********************************
+Rotor name:NEOM_BCL809
+Rotor status: 1 - Green flag
+Rotor working-days:7.5
+Rotor expected life [days]:169
+Rotor working-cycles:3
+Rotor expected cycles:203

@@ -1,0 +1,18 @@
+nsel,s,,,       2892 
+nsel,a,,,       2893 
+nsel,a,,,       2896 
+nsel,a,,,       2900 
+nsel,a,,,       2901 
+nsel,a,,,       2904 
+nsel,a,,,       2908 
+nsel,a,,,       2909 
+nsel,a,,,       2912 
+nsel,a,,,       2916 
+nsel,a,,,       2917 
+nsel,a,,,       2920 
+nsel,a,,,       2924 
+nsel,a,,,       2928 
+nsel,a,,,       2929 
+nsel,a,,,       2932 
+cm,n_disk1_worst_ALL,node
+alls

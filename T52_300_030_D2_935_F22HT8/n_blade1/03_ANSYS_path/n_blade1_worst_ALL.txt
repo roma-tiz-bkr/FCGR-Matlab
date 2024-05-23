@@ -1,0 +1,36 @@
+nsel,s,,,       1892 
+nsel,a,,,       1893 
+nsel,a,,,       1894 
+nsel,a,,,       2011 
+nsel,a,,,       2012 
+nsel,a,,,       2013 
+nsel,a,,,       2015 
+nsel,a,,,       2016 
+nsel,a,,,       2017 
+nsel,a,,,       2018 
+nsel,a,,,       2019 
+nsel,a,,,       2020 
+nsel,a,,,       2132 
+nsel,a,,,       2133 
+nsel,a,,,       2134 
+nsel,a,,,       2135 
+nsel,a,,,       2136 
+nsel,a,,,       2137 
+nsel,a,,,       2141 
+nsel,a,,,       2250 
+nsel,a,,,       2251 
+nsel,a,,,       2252 
+nsel,a,,,       2253 
+nsel,a,,,       2255 
+nsel,a,,,       2256 
+nsel,a,,,       2374 
+nsel,a,,,       4221 
+nsel,a,,,       4222 
+nsel,a,,,       4223 
+nsel,a,,,       4224 
+nsel,a,,,       4225 
+nsel,a,,,       4226 
+nsel,a,,,       4227 
+nsel,a,,,       4229 
+cm,n_blade1_worst_ALL,node
+alls

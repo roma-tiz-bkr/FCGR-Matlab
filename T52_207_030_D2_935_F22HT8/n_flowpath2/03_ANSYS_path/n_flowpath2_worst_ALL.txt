@@ -1,0 +1,21 @@
+nsel,s,,,       1202 
+nsel,a,,,       1207 
+nsel,a,,,       1212 
+nsel,a,,,       1222 
+nsel,a,,,       1232 
+nsel,a,,,       1314 
+nsel,a,,,       1322 
+nsel,a,,,     138310 
+nsel,a,,,     138325 
+nsel,a,,,     138333 
+nsel,a,,,     138334 
+nsel,a,,,     138335 
+nsel,a,,,     138345 
+nsel,a,,,     138350 
+nsel,a,,,     138355 
+nsel,a,,,     138356 
+nsel,a,,,     138361 
+nsel,a,,,     138370 
+nsel,a,,,     138376 
+cm,n_flowpath2_worst_ALL,node
+alls

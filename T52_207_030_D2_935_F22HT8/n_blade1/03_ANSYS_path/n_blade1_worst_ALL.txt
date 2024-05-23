@@ -1,0 +1,24 @@
+nsel,s,,,        236 
+nsel,a,,,        255 
+nsel,a,,,        273 
+nsel,a,,,        274 
+nsel,a,,,        292 
+nsel,a,,,        293 
+nsel,a,,,        311 
+nsel,a,,,        312 
+nsel,a,,,        330 
+nsel,a,,,        349 
+nsel,a,,,        368 
+nsel,a,,,        369 
+nsel,a,,,        406 
+nsel,a,,,        407 
+nsel,a,,,        425 
+nsel,a,,,        444 
+nsel,a,,,        463 
+nsel,a,,,        482 
+nsel,a,,,        501 
+nsel,a,,,        519 
+nsel,a,,,        801 
+nsel,a,,,     135199 
+cm,n_blade1_worst_ALL,node
+alls

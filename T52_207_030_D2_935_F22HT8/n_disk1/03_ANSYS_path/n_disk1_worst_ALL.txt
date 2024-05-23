@@ -1,0 +1,12 @@
+nsel,s,,,     141479 
+nsel,a,,,     141480 
+nsel,a,,,     141484 
+nsel,a,,,     141488 
+nsel,a,,,     141492 
+nsel,a,,,     141500 
+nsel,a,,,     141504 
+nsel,a,,,     141512 
+nsel,a,,,     141515 
+nsel,a,,,     141516 
+cm,n_disk1_worst_ALL,node
+alls

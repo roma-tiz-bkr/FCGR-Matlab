@@ -1,0 +1,21 @@
+nsel,s,,,        909 
+nsel,a,,,        910 
+nsel,a,,,        913 
+nsel,a,,,        914 
+nsel,a,,,        918 
+nsel,a,,,        921 
+nsel,a,,,        922 
+nsel,a,,,        925 
+nsel,a,,,        929 
+nsel,a,,,        930 
+nsel,a,,,        933 
+nsel,a,,,        934 
+nsel,a,,,        937 
+nsel,a,,,        938 
+nsel,a,,,        941 
+nsel,a,,,        945 
+nsel,a,,,        946 
+nsel,a,,,        949 
+nsel,a,,,        950 
+cm,n_disk1_worst_ALL,node
+alls
